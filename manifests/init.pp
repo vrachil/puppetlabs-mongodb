@@ -63,7 +63,8 @@ class mongodb (
   $slave           = undef,
   $only            = undef,
   $master          = undef,
-  $source          = undef
+  $source          = undef,
+  $conf_file       = undef
 ) inherits mongodb::params {
 
   if $enable_10gen {
@@ -79,12 +80,18 @@ class mongodb (
     $package = $mongodb::params::package
   }
 
+  if $conf_file {
+    $config = $conf_file
+  } else {
+    $config = $mongodb::params::config
+  }
+
   package { $package:
     name   => $package,
     ensure => installed,
   }
 
-  file { $mongodb::params::config:
+  file { $config:
     content => template('mongodb/mongod.conf.erb'),
     owner   => 'root',
     group   => 'root',
@@ -96,6 +103,6 @@ class mongodb (
     name      => $servicename,
     ensure    => running,
     enable    => true,
-    subscribe => File[$mongodb::params::config],
+    subscribe => File[$config],
   }
 }
