@@ -1,0 +1,15 @@
+#!/bin/sh
+
+DATE=`date '+%Y%m%d'`
+
+<% if @bind_ip -%>
+HOST=<%= bind_ip %>
+<% else -%>
+HOST='127.0.0.1'
+<% end -%>
+
+cd /var/backup
+
+mongodump -h $HOST -o $DATE
+tar cjf mongodb-$DATE.tar.bz2 $DATE
+rm -r $DATE

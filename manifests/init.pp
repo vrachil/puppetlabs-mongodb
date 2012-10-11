@@ -105,4 +105,41 @@ class mongodb (
     enable    => true,
     subscribe => File[$config],
   }
+
+  file {
+    'backup dir':
+      ensure  => directory,
+      path    => '/var/backup',
+      group   => 'mongodb',
+      mode    => '0775',
+      require => Package[$package];
+
+    'mongobackup':
+      ensure  => file,
+      path    => '/usr/local/bin/backup-mongo.sh',
+      content => template('mongodb/backup-mongo.sh.erb'),
+      owner   => 'mongodb',
+      group   => 'mongodb',
+      mode    => '0755',
+      require => Package[$package];
+
+    'mongorestore':
+      ensure  => file,
+      path    => '/usr/local/bin/restore-mongo.sh',
+      content => template('mongodb/restore-mongo.sh.erb'),
+      owner   => 'mongodb',
+      group   => 'mongodb',
+      mode    => '0755',
+      require => Package[$package];
+  }
+
+  cron {
+    'backup':
+      ensure  => present,
+      command => '/usr/local/bin/backup-mongo.sh',
+      user    => 'mongodb',
+      hour    => 2,
+      minute  => 7,
+      require => [ Package[$package], File['mongobackup'] ]
+  }
 }

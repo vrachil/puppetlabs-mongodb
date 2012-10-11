@@ -1,0 +1,16 @@
+#!/bin/sh
+
+ARCHIVE=$1
+
+<% if @bind_ip -%>
+HOST=<%= bind_ip %>
+<% else -%>
+HOST='127.0.0.1'
+<% end -%>
+
+DUMPS=`date '+%Y%m%d'`
+
+mkdir $DUMPS
+tar xf $ARCHIVE -C $DUMPS
+mongoresore -h $HOST $DUMPS
+rm -r $DUMPS
