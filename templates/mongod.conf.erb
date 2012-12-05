@@ -50,6 +50,10 @@ quota = <%= quota %>
 #   7=W+some reads
 oplog = <%= oplog %>
 <% end %>
+<% if @oplogSize %>
+# The oplog size in MB
+oplogSize = <%= oplogSize %>
+<% end %>
 <% if @nohints %>
 # Ignore query hints
 nohints = <%= nohints %>
